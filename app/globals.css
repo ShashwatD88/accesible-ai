@@ -1,26 +1,165 @@
 @import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
 
+/* 🌍 ROOT THEME */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #020617;
+  --foreground: #f1f5f9;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
+/* 🌑 DARK MODE */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #020617;
+    --foreground: #e2e8f0;
   }
 }
 
+/* 🌍 BASE BODY */
+html,
 body {
-  background: var(--background);
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  background: radial-gradient(circle at top, #0f172a, #020617);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Inter", system-ui, sans-serif;
+  overflow: hidden;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ✨ SCROLLBAR */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+/* 🌟 ANIMATIONS */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 1s ease forwards;
+}
+
+.delay-200 {
+  animation-delay: 0.2s;
+}
+
+.delay-400 {
+  animation-delay: 0.4s;
+}
+
+/* 💎 GLASS UI */
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+}
+
+/* 🔘 BUTTONS */
+.button {
+  padding: 10px 16px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.button:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+/* 🌈 GRADIENT TEXT */
+.gradient-text {
+  background: linear-gradient(90deg, #38bdf8, #6366f1);
+
+  background-clip: text;
+  -webkit-background-clip: text;
+
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ✨ PULSE BUTTON */
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 0px rgba(59, 130, 246, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.9);
+  }
+  100% {
+    box-shadow: 0 0 0px rgba(59, 130, 246, 0.7);
+  }
+}
+
+.pulse {
+  animation: pulseGlow 2s infinite;
+}
+
+/* ===================================================== */
+/* 🔥 MAP MARKER ANIMATIONS (NEW SECTION) */
+/* ===================================================== */
+
+/* 🔵 USER PULSE */
+@keyframes markerPulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(2);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.marker-user {
+  position: relative;
+}
+
+.marker-user::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  width: 30px;
+  height: 30px;
+  background: rgba(59, 130, 246, 0.5);
+  border-radius: 50%;
+  animation: markerPulse 1.5s infinite;
+}
+
+/* 🟡 SELECTED LOCATION */
+.marker-selected {
+  animation: markerPulse 1.2s infinite;
+}
+
+/* 🟢 PLACE HOVER EFFECT */
+.marker-place {
+  transition: transform 0.2s ease;
+}
+
+.marker-place:hover {
+  transform: scale(1.3);
 }
