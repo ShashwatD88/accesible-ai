@@ -290,7 +290,7 @@ export default function AssistantView() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
-      className="fixed inset-0 z-50 bg-gray-50 flex overflow-hidden font-sans text-gray-800"
+      className="fixed inset-0 z-50 bg-gray-50 flex flex-col md:flex-row overflow-hidden font-sans text-gray-800"
     >
       
       {/* 🔙 Back Button */}
@@ -303,23 +303,23 @@ export default function AssistantView() {
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
       </motion.button>
 
-      {/* 🗨️ Left Column: Conversational AI */}
-      <div className="w-1/2 h-full bg-white shadow-2xl z-10 flex flex-col border-r border-gray-100 relative">
+      {/* 🗨️ Left/Top Column: Conversational AI */}
+      <div className="w-full md:w-1/2 h-1/2 md:h-full bg-white shadow-2xl z-10 flex flex-col border-b md:border-b-0 md:border-r border-gray-100 relative">
         {/* Header */}
-        <div className="h-24 flex items-center px-10 border-b border-gray-100 shrink-0 ml-16">
-          <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mr-4">
-            <span className="text-2xl">✨</span>
+        <div className="h-16 md:h-24 flex items-center px-4 md:px-10 border-b border-gray-100 shrink-0 ml-14 md:ml-16">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-50 rounded-2xl flex items-center justify-center mr-3">
+            <span className="text-xl md:text-2xl">✨</span>
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 tracking-tight">AI Assistant</h1>
-            <p className="text-sm text-gray-500">Your smart travel companion</p>
+            <h1 className="text-lg md:text-2xl font-bold text-gray-900 tracking-tight">AI Assistant</h1>
+            <p className="text-xs md:text-sm text-gray-500">Your smart travel companion</p>
           </div>
         </div>
 
         {/* Chat Area */}
         <div 
           ref={scrollRef} 
-          className="flex-1 overflow-y-auto p-10 space-y-6 scroll-smooth"
+          className="flex-1 overflow-y-auto p-4 md:p-10 space-y-4 md:space-y-6 scroll-smooth"
         >
           {chatMessages.map((msg, i) => (
             <motion.div 
@@ -329,7 +329,7 @@ export default function AssistantView() {
               className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
             >
               <div 
-                className={`max-w-[80%] rounded-3xl p-5 text-sm md:text-base leading-relaxed shadow-sm ${
+                className={`max-w-[85%] rounded-2xl md:rounded-3xl p-3 md:p-5 text-sm leading-relaxed shadow-sm ${
                   msg.role === "user" 
                     ? "bg-blue-600 text-white rounded-br-none" 
                     : "bg-gray-50 text-gray-800 rounded-bl-none border border-gray-100"
@@ -354,29 +354,29 @@ export default function AssistantView() {
         </div>
 
         {/* Input Area */}
-        <div className="p-8 border-t border-gray-100 bg-white shrink-0">
+        <div className="p-4 md:p-8 border-t border-gray-100 bg-white shrink-0">
           <div className="relative flex items-center">
             <input
               type="text"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
-              placeholder="Ask me to find places, check reviews..."
-              className="w-full bg-gray-50 text-gray-900 border border-gray-200 rounded-full pl-6 pr-16 py-4 outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 transition-all text-lg shadow-inner"
+              placeholder="Ask me to find places..."
+              className="w-full bg-gray-50 text-gray-900 border border-gray-200 rounded-full pl-4 md:pl-6 pr-14 py-3 md:py-4 outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 transition-all text-base shadow-inner"
             />
             <button
               onClick={handleSend}
               disabled={isLoading || !inputText.trim()}
-              className="absolute right-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2.5 rounded-full shadow-md transition-all flex items-center justify-center"
+              className="absolute right-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2.5 rounded-full shadow-md transition-all flex items-center justify-center"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
             </button>
           </div>
         </div>
       </div>
 
-      {/* 📍 Right Column: Places & Reviews Feed */}
-      <div className="w-1/2 h-full bg-gray-50 overflow-y-auto p-10 pt-24 custom-scrollbar">
+      {/* 📍 Right/Bottom Column: Places & Reviews Feed */}
+      <div className="w-full md:w-1/2 h-1/2 md:h-full bg-gray-50 overflow-y-auto p-4 md:p-10 pt-4 md:pt-10 custom-scrollbar">
         <AnimatePresence>
           {placesList.length === 0 ? (
             <motion.div 
@@ -391,18 +391,18 @@ export default function AssistantView() {
               <p className="text-sm mt-2 max-w-sm text-center">Ask the assistant to find places, and they'll appear here along with ratings and reviews.</p>
             </motion.div>
           ) : (
-            <div className="space-y-8">
+            <div className="space-y-4 md:space-y-8">
               <motion.h2 
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="text-2xl font-bold text-gray-900 mb-6 flex justify-between items-center"
+                className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6 flex justify-between items-center"
               >
                 <span>Places</span>
                 <button 
                   onClick={() => setShowAssistantView(false)}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-colors shadow-sm"
+                  className="px-3 py-1.5 md:px-4 md:py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs md:text-sm font-semibold transition-colors shadow-sm"
                 >
-                  Show all on Map
+                  Show on Map
                 </button>
               </motion.h2>
               {placesList.map((place, i) => (
@@ -410,12 +410,12 @@ export default function AssistantView() {
                   key={i}
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                  className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                  transition={{ delay: i * 0.05 }}
+                  className="bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300"
                 >
-                  <div className="flex gap-6">
+                  <div className="flex gap-3 md:gap-6">
                     {/* Place Image */}
-                    <div className="w-32 h-32 bg-gray-200 rounded-2xl shrink-0 overflow-hidden relative">
+                    <div className="w-20 h-20 md:w-32 md:h-32 bg-gray-200 rounded-xl md:rounded-2xl shrink-0 overflow-hidden relative">
                        {place.imageUrl ? (
                          <img src={place.imageUrl} alt={place.name} className="w-full h-full object-cover" />
                        ) : (
@@ -425,9 +425,9 @@ export default function AssistantView() {
                        )}
                     </div>
                     
-                    <div className="flex-1">
-                      <div className="flex justify-between items-start">
-                        <h3 className="text-xl font-bold text-gray-900 line-clamp-1">{place.name}</h3>
+                    <div className="flex-1 min-w-0">
+                       <div className="flex justify-between items-start gap-2">
+                         <h3 className="text-base md:text-xl font-bold text-gray-900 line-clamp-1">{place.name}</h3>
                         {place.accessible && (
                           <span className="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-semibold flex items-center gap-1 shrink-0">
                             <span className="text-sm">♿</span> Accessible
@@ -460,22 +460,19 @@ export default function AssistantView() {
                       </div>
 
                       {/* Actions */}
-                      <div className="mt-6 flex justify-end gap-3">
-                        <button className="px-5 py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-xl text-sm font-semibold transition-colors border border-gray-200">
-                          Read All Reviews
-                        </button>
-                        <button 
-                          onClick={() => {
-                            setSelectedCoords([place.lat, place.lng]);
-                            setZoom(16);
-                            setShowMap(true);
-                            setShowAssistantView(false);
-                          }}
-                          className="px-5 py-2.5 bg-black hover:bg-gray-800 text-white rounded-xl text-sm font-semibold transition-colors"
-                        >
-                          View on Map
-                        </button>
-                      </div>
+                       <div className="mt-3 md:mt-6 flex justify-end gap-2">
+                         <button 
+                           onClick={() => {
+                             setSelectedCoords([place.lat, place.lng]);
+                             setZoom(16);
+                             setShowMap(true);
+                             setShowAssistantView(false);
+                           }}
+                           className="px-3 py-2 md:px-5 md:py-2.5 bg-black hover:bg-gray-800 text-white rounded-xl text-xs md:text-sm font-semibold transition-colors"
+                         >
+                           View on Map
+                         </button>
+                       </div>
                     </div>
                   </div>
                 </motion.div>

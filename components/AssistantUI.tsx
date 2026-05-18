@@ -187,15 +187,15 @@ export default function AssistantUI() {
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: "spring", stiffness: 200, damping: 20 }}
-      className="fixed bottom-6 right-6 z-20"
+      className="hidden md:block fixed bottom-6 right-6 z-20"
     >
-      <div className="glass p-5 w-[280px] text-white shadow-2xl rounded-2xl border border-white/10 backdrop-blur-md">
+      <div className="glass p-4 w-[260px] text-white shadow-2xl rounded-2xl border border-white/10 backdrop-blur-md">
         <div className="flex items-center gap-2 mb-2">
           <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse" />
-          <h1 className="text-lg font-bold">🤖 Assistant</h1>
+          <h1 className="text-base font-bold">🤖 Assistant</h1>
         </div>
 
-        <p className="mt-2 text-sm text-gray-200">
+        <p className="mt-1 text-sm text-gray-200 line-clamp-2">
           {intent ? intent.data.message || `Action: ${intent.data.action}` : "Listening..."}
         </p>
 

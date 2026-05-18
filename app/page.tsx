@@ -54,21 +54,24 @@ export default function Home() {
       {/* 🗺 Actual map */}
       <MapView />
 
-      {/* 🤖 3D AI Assistant Button */}
-      <div className="fixed top-6 left-6 z-40" style={{ perspective: "1000px" }}>
+      {/* 🤖 AI Assistant Button — top-left on desktop, bottom-center on mobile */}
+      <div
+        className="fixed z-40 bottom-6 left-1/2 -translate-x-1/2 md:bottom-auto md:top-6 md:left-6 md:translate-x-0"
+        style={{ perspective: "1000px" }}
+      >
         <motion.button
           onClick={() => setShowAssistantView(true)}
-          whileHover={{ 
-            scale: 1.05, 
-            rotateX: 15, 
+          whileHover={{
+            scale: 1.05,
+            rotateX: 15,
             rotateY: -15,
             boxShadow: "0px 15px 30px rgba(59, 130, 246, 0.4)"
           }}
           whileTap={{ scale: 0.95, rotateX: 0, rotateY: 0 }}
           style={{ transformStyle: "preserve-3d" }}
-          className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3 px-6 rounded-2xl shadow-xl flex items-center gap-3 border border-white/20 transition-colors"
+          className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3 px-6 rounded-2xl shadow-xl flex items-center gap-3 border border-white/20 transition-colors whitespace-nowrap"
         >
-          <span className="text-xl">✨</span> 
+          <span className="text-xl">✨</span>
           <span>AI Assistant</span>
         </motion.button>
       </div>

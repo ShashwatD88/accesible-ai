@@ -6,6 +6,9 @@ import { speak } from "@/lib/speak";
 
 export default function VoiceInput() {
   useEffect(() => {
+    // Only run in browser
+    if (typeof window === "undefined") return;
+
     let processing = false;
 
     const SpeechRecognition =
@@ -13,11 +16,18 @@ export default function VoiceInput() {
       (window as any).SpeechRecognition;
 
     if (!SpeechRecognition) {
-      alert("Speech recognition not supported");
+      // Many mobile browsers (Firefox, iOS Chrome) don't support this — silently skip
+      console.warn("Speech recognition not supported on this device/browser.");
       return;
     }
 
-    const recognition = new SpeechRecognition();
+    let recognition: any;
+    try {
+      recognition = new SpeechRecognition();
+    } catch (e) {
+      console.warn("Failed to initialize SpeechRecognition:", e);
+      return;
+    }
 
     recognition.continuous = true;
     recognition.interimResults = true;
@@ -25,46 +35,49 @@ export default function VoiceInput() {
 
     recognition.onresult = async (event: any) => {
       const result = event.results[event.results.length - 1];
-
       if (!result.isFinal) return;
-
       const text = result[0].transcript.toLowerCase().trim();
-
       console.log("🎙 FINAL:", text);
-
       handleCommand(text);
     };
 
-    recognition.onend = () => {
-      setTimeout(() => recognition.start(), 400);
+    recognition.onerror = (event: any) => {
+      console.warn("Speech recognition error:", event.error);
     };
 
-    recognition.start();
+    recognition.onend = () => {
+      setTimeout(() => {
+        try { recognition.start(); } catch (e) { /* ignore */ }
+      }, 400);
+    };
+
+    try {
+      recognition.start();
+    } catch (e) {
+      console.warn("Could not start speech recognition:", e);
+    }
 
     async function handleCommand(text: string) {
       if (processing) return;
       processing = true;
 
       const store = useAppStore.getState();
-      
+
       try {
         console.log("🗣️ Sending command to Gemini:", text);
-        
+
         const res = await fetch("/api/gemini", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text })
+          body: JSON.stringify({ text }),
         });
-        
+
         const data = await res.json();
-        
+
         if (data && data.action && data.action !== "unknown") {
           console.log("🤖 Gemini Action:", data.action, data);
           store.setIntent(data);
-          
-          if (data.message) {
-            speak(data.message);
-          }
+          if (data.message) speak(data.message);
         } else {
           speak(data.message || "Command not recognized");
         }
@@ -75,6 +88,10 @@ export default function VoiceInput() {
         processing = false;
       }
     }
+
+    return () => {
+      try { recognition.stop(); } catch (e) { /* ignore */ }
+    };
   }, []);
 
   return null;
