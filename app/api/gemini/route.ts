@@ -28,7 +28,8 @@ Format:
 {
   "action": "action_name",
   "message": "A short, friendly message to speak back to the user",
-  "query": "optional search query",
+  "query": "optional search query (e.g. 'hospital', 'restaurant')",
+  "radius": 5000, // optional search radius in meters (default to 5000 if user says 'nearby' or 'range of 5kms')
   "zoom": 12, // optional zoom level (1-18)
   "lat": 12.97, // optional exact latitude
   "lng": 77.59, // optional exact longitude
@@ -38,7 +39,7 @@ Format:
 Allowed actions:
 - show_map: Open the map
 - hide_map: Close the map
-- search_place: Find a specific location or type of place (MUST provide "query", e.g., "restaurants" or "New York")
+- search_place: Find a specific location or type of place (MUST provide "query", e.g., "hospital" or "New York"). Also extract "radius" in meters if specified.
 - zoom_in: Zoom closer
 - zoom_out: Zoom out
 - pan: Move the map (MUST provide "panDirection")
@@ -98,7 +99,12 @@ function fallback(text: string) {
   if (text.includes("zoom out")) return { action: "zoom_out", message: "Zooming out" };
   if (text.includes("open map") || text.includes("show map")) return { action: "show_map", message: "Opening the map" };
   if (text.includes("close map") || text.includes("hide map")) return { action: "hide_map", message: "Closing the map" };
-  if (text.includes("find") || text.includes("accessible")) return { action: "search_place", query: "accessible places", message: "Searching for places" };
+  if (text.includes("find") || text.includes("search") || text.includes("nearby")) {
+    let radius = 5000;
+    if (text.includes("10km")) radius = 10000;
+    else if (text.includes("1km")) radius = 1000;
+    return { action: "search_place", query: text.replace("find me", "").replace("nearby", "").trim(), radius, message: "Searching for places" };
+  }
   if (text.includes("left")) return { action: "pan", panDirection: "left", message: "Panning left" };
   if (text.includes("right")) return { action: "pan", panDirection: "right", message: "Panning right" };
   if (text.includes("stop")) return { action: "stop_pan", message: "Stopping" };

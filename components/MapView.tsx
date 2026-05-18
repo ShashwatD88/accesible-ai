@@ -27,17 +27,18 @@ const userIcon = L.divIcon({
   `,
 });
 
-// 🟢 PLACE ICON
-const placeIcon = L.divIcon({
+// 🔴 PLACE ICON GENERATOR
+const getPlaceIcon = (index: number) => L.divIcon({
   className: "marker-place",
   html: `
-    <div style="
+    <div class="marker-falling" style="
       width:16px;
       height:16px;
-      background:#22c55e;
+      background:#ef4444;
       border-radius:50%;
       border:2px solid white;
-      box-shadow:0 0 10px rgba(34,197,94,0.9);
+      box-shadow:0 0 10px rgba(239,68,68,0.9);
+      animation-delay: ${index * 0.1}s;
     "></div>
   `,
 });
@@ -79,10 +80,10 @@ function MapController() {
     map.setZoom(zoom, { animate: true });
   }, [zoom, map]);
 
-  // Smooth fly to selected coordinates
+  // Fly to selected coordinates (snappy, not sluggish)
   useEffect(() => {
     if (selectedCoords) {
-      map.flyTo(selectedCoords, zoom, { duration: 1.5 });
+      map.flyTo(selectedCoords, zoom, { duration: 0.6, easeLinearity: 0.5 });
     }
   }, [selectedCoords, map]);
 
@@ -145,7 +146,7 @@ export default function MapView() {
 
         {/* 🟢 PLACES */}
         {places.map((p, i) => (
-          <Marker key={i} position={[p.lat, p.lng]} icon={placeIcon}>
+          <Marker key={i} position={[p.lat, p.lng]} icon={getPlaceIcon(i)}>
             <Popup>{p.name}</Popup>
           </Marker>
         ))}

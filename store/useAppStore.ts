@@ -10,6 +10,7 @@ type Place = {
 export type IntentAction = {
   action: string;
   query?: string;
+  radius?: number;
   zoom?: number;
   lat?: number;
   lng?: number;
@@ -58,6 +59,18 @@ interface AppState {
   showPlacesPanel: boolean;
   setShowPlacesPanel: (v: boolean) => void;
 
+  showAIPanel: boolean;
+  setShowAIPanel: (v: boolean) => void;
+
+  showAssistantView: boolean;
+  setShowAssistantView: (v: boolean) => void;
+
+  assistantPlacesList: any[];
+  setAssistantPlacesList: (places: any[]) => void;
+
+  chatMessages: { role: "user" | "model", text: string }[];
+  addChatMessage: (msg: { role: "user" | "model", text: string }) => void;
+
   currentIndex: number;
   setIndex: (i: number) => void;
 
@@ -96,6 +109,18 @@ export const useAppStore = create<AppState>((set) => ({
 
   showPlacesPanel: false,
   setShowPlacesPanel: (v) => set({ showPlacesPanel: v }),
+
+  showAIPanel: false,
+  setShowAIPanel: (v) => set({ showAIPanel: v }),
+
+  showAssistantView: false,
+  setShowAssistantView: (v) => set({ showAssistantView: v }),
+
+  assistantPlacesList: [],
+  setAssistantPlacesList: (places) => set({ assistantPlacesList: places }),
+
+  chatMessages: [{ role: "model", text: "Hello! I'm your AI travel assistant. How can I help you plan your trip today?" }],
+  addChatMessage: (msg) => set((state) => ({ chatMessages: [...state.chatMessages, msg] })),
 
   currentIndex: 0,
   setIndex: (i) => set({ currentIndex: i }),

@@ -34,41 +34,91 @@ export default function AssistantUI() {
     if (action === "show_map") setShowMap(true);
     if (action === "hide_map") setShowMap(false);
 
-    // 🔍 SEARCH WITH GEOCODING
+    // 🔍 SEARCH WITH GEOCODING & OVERPASS
     if (action === "search_place" && data.query) {
       setIsSearching(true);
       setShowPlacesPanel(true);
-      
-      // Use Nominatim OpenStreetMap API
-      const searchUrl = new URL("https://nominatim.openstreetmap.org/search");
-      searchUrl.searchParams.append("format", "json");
-      searchUrl.searchParams.append("q", data.query);
-      searchUrl.searchParams.append("limit", "5");
-      
-      // Prefer results near user if we have location
-      if (userLocation) {
-        searchUrl.searchParams.append("lat", userLocation[0].toString());
-        searchUrl.searchParams.append("lon", userLocation[1].toString());
-      }
 
-      fetch(searchUrl.toString())
+      const fallbackToNominatim = () => {
+        // Use Nominatim OpenStreetMap API
+        const searchUrl = new URL("https://nominatim.openstreetmap.org/search");
+        searchUrl.searchParams.append("format", "json");
+        searchUrl.searchParams.append("q", data.query!);
+        searchUrl.searchParams.append("limit", "5");
+        
+        if (userLocation) {
+          searchUrl.searchParams.append("lat", userLocation[0].toString());
+          searchUrl.searchParams.append("lon", userLocation[1].toString());
+        }
+
+        fetch(searchUrl.toString())
+          .then(res => res.json())
+          .then(results => {
+            if (results && results.length > 0) {
+              const newPlaces = results.map((r: any) => ({
+                name: r.display_name.split(",")[0],
+                lat: parseFloat(r.lat),
+                lng: parseFloat(r.lon),
+                accessible: true 
+              }));
+              setPlaces([...places, ...newPlaces]);
+              setSelectedCoords([parseFloat(results[0].lat), parseFloat(results[0].lon)]);
+              setShowMap(true);
+            }
+          })
+          .catch(err => console.error("Geocoding failed", err))
+          .finally(() => setIsSearching(false));
+      };
+
+      if (userLocation) {
+        const radius = data.radius || 5000;
+        const cat = data.query.toLowerCase();
+        
+        // Map common queries to OSM tags for accuracy
+        let tagQuery = `["name"~"${cat}",i]`;
+        if (cat.includes("hospital") || cat.includes("clinic")) tagQuery = `["amenity"~"hospital|clinic"]`;
+        else if (cat.includes("supermarket") || cat.includes("grocery")) tagQuery = `["shop"~"supermarket|convenience"]`;
+        else if (cat.includes("restaurant") || cat.includes("food")) tagQuery = `["amenity"~"restaurant|fast_food|cafe"]`;
+        else if (cat.includes("park")) tagQuery = `["leisure"="park"]`;
+
+        const overpassQuery = `[out:json];node${tagQuery}(around:${radius},${userLocation[0]},${userLocation[1]});out 10;`;
+        
+        fetch("https://overpass-api.de/api/interpreter", {
+          method: "POST",
+          body: overpassQuery
+        })
         .then(res => res.json())
         .then(results => {
-          if (results && results.length > 0) {
-            const newPlaces = results.map((r: any) => ({
-              name: r.display_name.split(",")[0],
-              lat: parseFloat(r.lat),
-              lng: parseFloat(r.lon),
-              accessible: true // Assume accessible for now or add toggle
+          if (results.elements && results.elements.length > 0) {
+            const newPlaces = results.elements.map((r: any) => ({
+              name: r.tags?.name || cat.charAt(0).toUpperCase() + cat.slice(1),
+              lat: r.lat,
+              lng: r.lon,
+              accessible: r.tags?.wheelchair === "yes"
             }));
-            setPlaces([...places, ...newPlaces]);
-            // Fly to the first result
-            setSelectedCoords([parseFloat(results[0].lat), parseFloat(results[0].lon)]);
-            setShowMap(true);
+            
+            // Only add unique new places
+            const existingNames = new Set(places.map(p => p.name));
+            const addedPlaces = newPlaces.filter((p: any) => !existingNames.has(p.name));
+            
+            if (addedPlaces.length > 0) {
+              setPlaces([...places, ...addedPlaces]);
+              setSelectedCoords([addedPlaces[0].lat, addedPlaces[0].lng]);
+              setShowMap(true);
+              setIsSearching(false);
+            } else {
+              fallbackToNominatim();
+            }
+          } else {
+             fallbackToNominatim();
           }
-        })
-        .catch(err => console.error("Geocoding failed", err))
-        .finally(() => setIsSearching(false));
+        }).catch((err) => {
+          console.error("Overpass failed, using fallback:", err);
+          fallbackToNominatim();
+        });
+      } else {
+        fallbackToNominatim();
+      }
     }
 
     // 🚀 FLY TO
@@ -103,6 +153,32 @@ export default function AssistantUI() {
         selectPlace(place);
         setShowMap(true);
       }
+    }
+
+    // 🏙️ NAVIGATE (voice: "go to Mumbai", "migrate me to Paris", etc.)
+    if (action === "search_place" && data.query && data.lat === undefined) {
+      // already handled above
+    }
+    if (action === "navigate" && data.query) {
+      setIsSearching(true);
+      const searchUrl = new URL("https://nominatim.openstreetmap.org/search");
+      searchUrl.searchParams.append("format", "json");
+      searchUrl.searchParams.append("q", data.query);
+      searchUrl.searchParams.append("limit", "1");
+
+      fetch(searchUrl.toString())
+        .then((res) => res.json())
+        .then((results) => {
+          if (results && results.length > 0) {
+            const lat = parseFloat(results[0].lat);
+            const lon = parseFloat(results[0].lon);
+            setSelectedCoords([lat, lon]);
+            setZoom(13);
+            setShowMap(true);
+          }
+        })
+        .catch((err) => console.error("Navigate geocoding failed:", err))
+        .finally(() => setIsSearching(false));
     }
   }, [intent?.time]);
 
