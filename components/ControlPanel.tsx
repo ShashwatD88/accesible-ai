@@ -107,7 +107,7 @@ export default function ControlPanel() {
       {/* Search */}
       <button
         onClick={() => {
-          setIntent("find_accessible_places");
+          setIntent({ action: "find_accessible_places" });
           speak("Searching accessible places");
         }}
         className="button bg-purple-500 w-full"
