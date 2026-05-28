@@ -290,7 +290,7 @@ export default function AssistantView() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
-      className="fixed inset-0 z-50 bg-gray-50 flex flex-col md:flex-row overflow-hidden font-sans text-gray-800"
+      className="fixed inset-0 z-50 bg-gray-50 flex flex-col md:flex-row overflow-hidden font-outfit text-gray-800"
     >
       
       {/* 🔙 Back Button */}
@@ -306,13 +306,17 @@ export default function AssistantView() {
       {/* 🗨️ Left/Top Column: Conversational AI */}
       <div className="w-full md:w-1/2 h-1/2 md:h-full bg-white shadow-2xl z-10 flex flex-col border-b md:border-b-0 md:border-r border-gray-100 relative">
         {/* Header */}
-        <div className="h-16 md:h-24 flex items-center px-4 md:px-10 border-b border-gray-100 shrink-0 ml-14 md:ml-16">
-          <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-50 rounded-2xl flex items-center justify-center mr-3">
-            <span className="text-xl md:text-2xl">✨</span>
+        <div className="h-16 md:h-24 flex items-center px-4 md:px-10 border-b border-blue-200/40 shrink-0 ml-14 md:ml-16 bg-gradient-to-r from-white via-blue-50 to-blue-100/40">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mr-3 shadow-md shadow-blue-500/10">
+            <span className="text-white text-lg md:text-xl">✨</span>
           </div>
           <div>
-            <h1 className="text-lg md:text-2xl font-bold text-gray-900 tracking-tight">AI Assistant</h1>
-            <p className="text-xs md:text-sm text-gray-500">Your smart travel companion</p>
+            <h1 className="text-lg md:text-2xl font-space-grotesk font-black text-black tracking-wider uppercase leading-none">
+              accessible <span className="text-blue-600 font-extrabold">ai</span>
+            </h1>
+            <p className="text-[10px] md:text-xs font-outfit text-gray-500 tracking-wide uppercase mt-1">
+              Your smart travel companion
+            </p>
           </div>
         </div>
 

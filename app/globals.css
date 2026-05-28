@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
+@theme {
+  --font-outfit: var(--font-outfit), sans-serif;
+  --font-space-grotesk: var(--font-space-grotesk), sans-serif;
+}
+
 /* 🌍 ROOT THEME */
 :root {
   --background: #020617;
@@ -198,4 +203,15 @@ body {
 
 .marker-falling {
   animation: markerFalling 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* 🗺️ SHIFT LEAFLET CONTROLS BELOW HEADER */
+.leaflet-top {
+  top: 88px !important;
+}
+
+@media (max-width: 767px) {
+  .leaflet-top {
+    top: 72px !important;
+  }
 }

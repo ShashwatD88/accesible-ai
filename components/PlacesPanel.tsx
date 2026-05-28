@@ -45,7 +45,7 @@ export default function PlacesPanel() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-30 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+          className="fixed inset-0 z-30 flex items-center justify-center bg-black/50 backdrop-blur-sm font-outfit"
         >
           <motion.div 
             initial={{ scale: 0.9, y: 20 }}
@@ -56,18 +56,18 @@ export default function PlacesPanel() {
           >
             <button 
               onClick={() => closePanel(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+              className="absolute top-4 right-4 text-gray-400 hover:text-white p-1 rounded-full hover:bg-white/10 transition-colors w-7 h-7 flex items-center justify-center"
             >
-              ✖
+              ✕
             </button>
 
-            <h2 className="text-xl font-bold mb-3 flex items-center gap-2">
-              <span className="text-2xl">📍</span> Places
+            <h2 className="text-xl font-space-grotesk font-black tracking-wide mb-4 flex items-center gap-2">
+              <span className="text-2xl">📍</span> Nearby Places
             </h2>
 
             {userLocation && (
               <p className="text-xs text-blue-300 mb-4 bg-blue-500/10 p-2 rounded-lg inline-block border border-blue-500/20">
-                Your location: {userLocation[0].toFixed(3)}, {userLocation[1].toFixed(3)}
+                📍 {userLocation[0].toFixed(4)}, {userLocation[1].toFixed(4)}
               </p>
             )}
 
@@ -79,12 +79,12 @@ export default function PlacesPanel() {
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
+                    transition={{ delay: index * 0.05 }}
                     key={index}
-                    className={`p-3 rounded-xl flex justify-between items-center transition-all hover:bg-white/20 ${
+                    className={`p-3.5 rounded-xl flex justify-between items-center transition-all hover:bg-white/15 border ${
                       isNearest
-                        ? "bg-green-500/20 border border-green-400/50 shadow-[0_0_15px_rgba(34,197,94,0.2)]"
-                        : "bg-white/10 border border-white/5"
+                        ? "bg-green-500/10 border-green-500/40 shadow-[0_0_15px_rgba(34,197,94,0.15)]"
+                        : "bg-white/5 border-white/5"
                     }`}
                   >
                     <div
@@ -102,24 +102,26 @@ export default function PlacesPanel() {
                         {userLocation ? formatDistance(place.distance) : ""}
                       </p>
 
-                      <p className="text-[10px] text-green-400 mt-1 uppercase tracking-wider font-bold">
-                        Accessible ✔
+                      <p className="text-[10px] text-green-400 mt-1.5 uppercase tracking-wider font-bold">
+                        ♿ Accessible ✔
                       </p>
                     </div>
 
                     {/* ❌ DELETE */}
                     <button
                       onClick={() => deletePlace(index)}
-                      className="text-red-400/70 hover:text-red-400 text-xs hover:scale-110 p-2 transition-transform"
+                      className="text-red-400/60 hover:text-red-400 text-sm hover:scale-110 p-2 transition-transform cursor-pointer"
                     >
-                      ✖
+                      ✕
                     </button>
                   </motion.div>
                 );
               })}
 
               {places.length === 0 && (
-                <p className="text-sm text-gray-400 text-center py-6">No places found. Ask Assistant to search!</p>
+                <p className="text-sm text-gray-400 text-center py-8">
+                  No places found. Ask the Assistant to search!
+                </p>
               )}
             </div>
           </motion.div>
